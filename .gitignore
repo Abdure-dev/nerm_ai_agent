@@ -35,3 +35,7 @@ build/
 # Secrets
 *.pem
 *.key
+
+# Local UChicago NERM source documents. Keep approved internal material out of Git.
+knowledge-base/uchicago-nerm/*
+!knowledge-base/uchicago-nerm/README.md

@@ -1,26 +1,21 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* University of Chicago palette: maroon with greystone neutrals. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-maroon: #800000;
+  --color-maroon-dark: #5c0000;
+  --color-maroon-light: #f6eded;
+  --color-greystone: #d6d6ce;
+  --color-greystone-light: #f2f2ef;
+  --color-greystone-dark: #767676;
+  --color-ink: #1f1f1f;
+  --font-sans: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-garamond), Garamond, Georgia, serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-greystone-light);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
 }

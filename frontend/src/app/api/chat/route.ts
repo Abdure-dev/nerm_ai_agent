@@ -1,30 +1,53 @@
 import { NextResponse } from "next/server";
 
-type ChatRequest = {
-  message?: string;
-};
+import {
+  AgentUpstreamError,
+  runNermAgent,
+} from "@/lib/nerm-agent";
+import type { ChatRequest, ChatResponse } from "@/lib/types";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as ChatRequest;
-    const message = body.message?.trim();
+    const body = (await request.json()) as Partial<ChatRequest>;
+    const messages = body.messages
+      ?.filter(
+        (message) =>
+          (message.role === "user" || message.role === "assistant") &&
+          typeof message.content === "string" &&
+          message.content.trim()
+      )
+      .slice(-20)
+      .map((message) => ({
+        role: message.role,
+        content: message.content.trim().slice(0, 8000),
+      }));
 
-    if (!message) {
+    if (!messages?.length || messages.at(-1)?.role !== "user") {
       return NextResponse.json(
-        { error: "Message is required." },
-        { status: 400 },
+        { error: "A user message is required." },
+        { status: 400 }
       );
     }
 
-    return NextResponse.json({
-      answer: `The NERM AI Agent received: "${message}"`,
-    });
+    const response: ChatResponse = await runNermAgent(messages, body.session);
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error("Chat request failed:", error);
 
+    if (error instanceof AgentUpstreamError) {
+      return NextResponse.json(
+        {
+          error:
+            "The school AI service is temporarily unavailable. Please try the request again.",
+        },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Unable to process the request." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
